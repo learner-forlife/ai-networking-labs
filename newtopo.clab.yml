@@ -1,0 +1,35 @@
+name: sonic-ai-fabric
+topology: 
+  nodes:
+    # --- SPINE LAYER ---
+    spine1:
+      kind: sonic-vs
+      image: gaurav/sonic:v1
+      memory: 2GB  # Keeps your 24GB RAM laptop stable
+
+    # --- LEAF LAYER ---
+    leaf1:
+      kind: sonic-vs
+      image: gaurav/sonic:v1
+      memory: 2GB
+    leaf2:
+      kind: sonic-vs
+      image: gaurav/sonic:v1
+      memory: 2GB
+
+    # --- HOST LAYER (End-points for Traffic Testing) ---
+    host1:
+      kind: linux
+      image: ubuntu:22.04
+    host2:
+      kind: linux
+      image: ubuntu:22.04
+
+  links:
+    # Spine to Leaf Connections (The Fabric)
+    - endpoints: ["spine1:eth1", "leaf1:eth1"]
+    - endpoints: ["spine1:eth2", "leaf2:eth1"]
+
+    # Leaf to Host Connections (The Access/Edge)
+    - endpoints: ["leaf1:eth2", "host1:eth1"]
+    - endpoints: ["leaf2:eth2", "host2:eth1"]
